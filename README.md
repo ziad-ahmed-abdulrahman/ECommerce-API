@@ -20,13 +20,6 @@ This is a professional **E-Commerce Backend API** built with **ASP.NET Core**, a
     * 🚀 **Postman:** Full collection support for manual endpoint verification.
 
 ---
-
-## 🚦 Getting Started & Configuration
-
-To run this project, you need to update the `appsettings.json` in the **ECommerce.Api** project with your credentials:
-
----
-
 ## 🛠️ Prerequisites & Tools
 
 Before you begin, ensure you have the following installed:
@@ -37,6 +30,10 @@ Before you begin, ensure you have the following installed:
 * **API Testing:** [Postman](https://www.postman.com/downloads/) & [Swagger](https://swagger.io/) (Included)
 * **Payment Setup:** A [Stripe Account](https://dashboard.stripe.com/register) (For testing keys)
 * **Email Setup:** A [SendGrid Account](https://signup.sendgrid.com/) (For API Key)
+---
+## 🚦 Getting Started & Configuration
+
+To run this project, you need to update the `appsettings.json` in the **ECommerce.Api** project with your credentials:
 
 ---
 ### 🚀 Postman Environment Setup
