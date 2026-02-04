@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.RateLimiting;
 namespace ECommerce.Api.Controllers
 {
     [Route("api/[controller]")]
-    [EnableRateLimiting("fixed")]
     [ApiController]
     public class BaseController : ControllerBase
     {
