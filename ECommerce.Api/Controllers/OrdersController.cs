@@ -1,9 +1,10 @@
-﻿using ECommerce.Api.Helper;
+using ECommerce.Api.Helper;
 using ECommerce.Core.DTOs;
 using ECommerce.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Stripe.Climate;
 using System.Security.Claims;
 
@@ -21,6 +22,7 @@ namespace ECommerce.Api.Controllers
             _orderService = orderService;
         }
         [HttpPost]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<IActionResult> CreateOrder(OrderDto orderDto) 
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -35,6 +37,8 @@ namespace ECommerce.Api.Controllers
         }
 
         [HttpGet]
+        [EnableRateLimiting("GeneralPolicy")]
+
         public async Task<IActionResult> GetOrdersForUser() 
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -64,6 +68,8 @@ namespace ECommerce.Api.Controllers
 
         }
         [HttpGet("{id}")]
+        [EnableRateLimiting("GeneralPolicy")]
+
         public async Task<IActionResult> GetOrdersForUser(int id) 
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -80,6 +86,8 @@ namespace ECommerce.Api.Controllers
 
         }
         [HttpGet("delivery-methods")]
+        [EnableRateLimiting("GeneralPolicy")]
+
         public async Task<IActionResult> GetDeliveryMethods() 
         {
             var deliveryMethods = await _orderService.GetDeliveryMethodsAsync();
