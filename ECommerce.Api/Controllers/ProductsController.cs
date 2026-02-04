@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ECommerce.Api.Helper;
 using ECommerce.Core.DTOs;
 using ECommerce.Core.Entites.Product;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -17,6 +18,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace ECommerce.Api.Controllers
 {
     [Route("api/products")]
+    [EnableRateLimiting("GeneralPolicy")]
     [ApiController]
 
 
