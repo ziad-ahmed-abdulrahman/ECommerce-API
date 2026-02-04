@@ -1,15 +1,17 @@
-﻿using AutoMapper;
+using AutoMapper;
 using ECommerce.Api.Helper;
 using ECommerce.Core.Entites.Basket;
 using ECommerce.Core.interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Runtime.CompilerServices;
 
 namespace ECommerce.Api.Controllers
 {
     [Route("api/baskets")]
+    [EnableRateLimiting("GeneralPolicy")]
     [ApiController]
     public class BasketsController : BaseController
     {
