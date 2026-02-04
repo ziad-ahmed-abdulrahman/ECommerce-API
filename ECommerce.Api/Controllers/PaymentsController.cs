@@ -1,13 +1,15 @@
-﻿using ECommerce.Api.Helper;
+using ECommerce.Api.Helper;
 using ECommerce.Core.Entites.Basket;
 using ECommerce.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ECommerce.Api.Controllers
 {
     [Route("api/payments")]
+    [EnableRateLimiting("StrictPolicy")]
     [ApiController]
     [Authorize]
     public class PaymentsController : ControllerBase
