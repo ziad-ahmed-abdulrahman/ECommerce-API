@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Azure;
 using ECommerce.Api.Helper;
 using ECommerce.Core.Account.Entites;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +46,7 @@ namespace ECommerce.Api.Controllers
         }
 
         #region Register EndPoint
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto userFromRequest)
         {
@@ -98,6 +100,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Send Code EndPoint
         [HttpPost("send-code")]
+        [EnableRateLimiting("StrictPolicy")]
 
         public async Task<IActionResult> SendCode(SendCodeDto sendCodeDto)
         {
@@ -197,6 +200,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Verify Code EndPoint
         [HttpPost("verify-code")]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<IActionResult> VerifyCode(VerifyCodeDto verifyEmailDto)
         {
             if (string.IsNullOrEmpty(verifyEmailDto.Email))
@@ -341,6 +345,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         //////////////////////////////
         #region Login
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto userFromRequest)
         {
@@ -407,6 +412,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Send Mail 
         [Authorize(Roles = "Admin")]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpPost("send-mail")]
         public async Task<IActionResult> Sendemail([FromForm] SendMailDto sendMmailDto)
         {
@@ -431,6 +437,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Get Me
         [HttpGet("me")]
+        [EnableRateLimiting("GeneralPolicy")]
         [Authorize]
         public async Task<IActionResult> GetMe()
         {
@@ -476,6 +483,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Update Me
         [Authorize]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpPatch]
 
         public async Task<IActionResult> UpdateMe(UpdateMeDto updateMeDto)
@@ -517,6 +525,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Delete Me
         [Authorize]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpDelete]
         public async Task<IActionResult> DeleteMe()
         {
@@ -547,6 +556,7 @@ namespace ECommerce.Api.Controllers
         #region Admin Panel
         #region  Add User
         [HttpPost]
+        [EnableRateLimiting("GeneralPolicy")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(AddUserDto userFromRequest)
         {
@@ -596,6 +606,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Get User
         [Authorize(Roles ="Admin")]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(string id)
         {
@@ -634,6 +645,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Get all Users (support sort, search, pagination)
         [HttpGet]
+        [EnableRateLimiting("GeneralPolicy")]
         [Authorize(Roles = "Admin")] // Only admin can access the users
         public async Task<IActionResult> GetAll([FromQuery] GetUsersParams getUsersParams)
         {
@@ -714,6 +726,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Update User
         [Authorize(Roles = "Admin")]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, UpdateUserDto updateUserDto)
         {
@@ -755,6 +768,7 @@ namespace ECommerce.Api.Controllers
         //////////////////////////////
         #region Delete User
         [Authorize(Roles = "Admin")]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> HardDeleteUser(string id)
         {
