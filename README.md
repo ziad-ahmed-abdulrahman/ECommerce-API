@@ -46,4 +46,4 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 Open your terminal or Git Bash and run:
 ```bash
-git clone [https://github.com/ziad-ahmed-abdulrahman/ECommerce-API.git](https://github.com/ziad-ahmed-abdulrahman/ECommerce-API.git)
+git clone https://github.com/ziad-ahmed-abdulrahman/ECommerce-API.git
