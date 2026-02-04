@@ -39,9 +39,23 @@ Before you begin, ensure you have the following installed:
 * **Email Setup:** A [SendGrid Account](https://signup.sendgrid.com/) (For API Key)
 
 ---
+### 🚀 Postman Environment Setup
 
+To test the API efficiently, follow these steps:
 
-## 📥 How to Clone and Setup
+1. **Import Files:**
+   - Import the collection file: `ECom Api-Shared.postman_collection.json`.
+   - Import the environment file: `ECom-Api-Shared.postman_environment.json`.
+
+2. **Configure Environment:**
+   After importing, select the environment and fill in your local or hosted values for the following variables:
+   - `base_url`: Your API host URL.
+   - `username_user`: Your test account username.
+   - `email_user`: Your test account email address.
+   - `pass_user`: Your test account password.
+   - `token`: **(Leave empty)**, it will be automatically populated after a successful login.
+---
+## 📥 How to Clone
 
 ### 1. Clone the Repository
 Open your terminal or Git Bash and run:
