@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using System.Threading.RateLimiting; 
 using StackExchange.Redis;
 using System.Text;
 namespace ECommerce.Api
@@ -28,41 +29,52 @@ namespace ECommerce.Api
             var builder = WebApplication.CreateBuilder(args);
 
 
+            // ============================================================
+            // Rate Limiting Configuration with Unified Response
+            // Configures API throttling and ensures a consistent 429 error format.
+            // ============================================================
+            builder.Services.AddRateLimiter(options =>
+            {
+               
+                options.AddPolicy("StrictPolicy", httpContext =>
+                {
+                    var remoteIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
+                    return RateLimitPartition.GetFixedWindowLimiter(remoteIp, _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,            
+                        Window = TimeSpan.FromMinutes(1), 
+                        QueueLimit = 0
+                    });
+                });
+
+               
+                options.AddPolicy("GeneralPolicy", partitioner: httpContext =>
+                {
+                    var remoteIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+                    return RateLimitPartition.GetFixedWindowLimiter(remoteIp, _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 15,           
+                        Window = TimeSpan.FromSeconds(10), 
+                        QueueLimit = 0
+                    });
+                });
+
+                options.OnRejected = async (context, token) =>
+                {
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    context.HttpContext.Response.ContentType = "application/json";
+                    var response = new ResponseAPI<object>(429, "Too many requests. Please slow down.");
+                    await context.HttpContext.Response.WriteAsJsonAsync(response, token);
+                };
+            });
             // 1. API Controllers & Swagger Documentation Services
             // Registers controllers and configures Swagger for API testing.
             // ============================================================
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-             // ============================================================
-            // Rate Limiting Configuration with Unified Response
-            // Configures API throttling and ensures a consistent 429 error format.
-            // ============================================================
-            builder.Services.AddRateLimiter(options =>
-            {
-                options.AddFixedWindowLimiter("fixed", opt =>
-                {
-                    opt.Window = TimeSpan.FromSeconds(10); // Time window
-                    opt.PermitLimit = 3;                  // Max requests
-                    opt.QueueLimit = 0;                   // Don't queue extra requests
-                });
-
-                // Custom handler to return your unified response format
-                options.OnRejected = async (context, token) =>
-                {
-                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-                    context.HttpContext.Response.ContentType = "application/json";
-
-                    // ============================================================
-                    // Replace this with your actual Unified Response Class
-                    // ============================================================
-                    var response = new ResponseAPI<object>(429, "Too many requests. Please slow down and try again later.");
-          
-                    await context.HttpContext.Response.WriteAsJsonAsync(response, token);
-                };
-            });
 
             // ============================================================
             // 2. File System & Image Management Services
