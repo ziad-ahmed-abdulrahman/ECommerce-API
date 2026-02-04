@@ -39,3 +39,11 @@ Before you begin, ensure you have the following installed:
 * **Email Setup:** A [SendGrid Account](https://signup.sendgrid.com/) (For API Key)
 
 ---
+
+
+## 📥 How to Clone and Setup
+
+### 1. Clone the Repository
+Open your terminal or Git Bash and run:
+```bash
+git clone [https://github.com/ziad-ahmed-abdulrahman/ECommerce-API.git](https://github.com/ziad-ahmed-abdulrahman/ECommerce-API.git)
