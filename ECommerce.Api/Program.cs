@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -26,13 +27,42 @@ namespace ECommerce.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // ============================================================
+
+
             // 1. API Controllers & Swagger Documentation Services
             // Registers controllers and configures Swagger for API testing.
             // ============================================================
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+             // ============================================================
+            // Rate Limiting Configuration with Unified Response
+            // Configures API throttling and ensures a consistent 429 error format.
+            // ============================================================
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("fixed", opt =>
+                {
+                    opt.Window = TimeSpan.FromSeconds(10); // Time window
+                    opt.PermitLimit = 3;                  // Max requests
+                    opt.QueueLimit = 0;                   // Don't queue extra requests
+                });
+
+                // Custom handler to return your unified response format
+                options.OnRejected = async (context, token) =>
+                {
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    context.HttpContext.Response.ContentType = "application/json";
+
+                    // ============================================================
+                    // Replace this with your actual Unified Response Class
+                    // ============================================================
+                    var response = new ResponseAPI<object>(429, "Too many requests. Please slow down and try again later.");
+          
+                    await context.HttpContext.Response.WriteAsJsonAsync(response, token);
+                };
+            });
 
             // ============================================================
             // 2. File System & Image Management Services
@@ -206,6 +236,12 @@ namespace ECommerce.Api
             // The first line of defense that catches any errors and returns a unified JSON response.
             // ============================================================
             app.UseMiddleware<ExceptionMiddleware>();
+
+            // ============================================================
+            // 3. Rate Limiting Middleware
+            // Throttles requests early in the pipeline to protect server resources.
+            // ============================================================
+            app.UseRateLimiter();
 
             // ============================================================
             // 3. Static Files Serving
